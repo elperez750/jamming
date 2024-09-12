@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { reccomendedArtistType } from "../types/homePageTypes";
+import { reccomendedArtistType } from "./types-discover/discoverPageTypes";
 
 export function ReccomendedArtist({id, name, imageUrl}: reccomendedArtistType) {
     return (

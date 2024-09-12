@@ -2,8 +2,7 @@ export type featuredPlayListType = {
     id: number;
     name: string;
     imageUrl: string;
-    songs: number;
-    hours: number;
+    tracks: number
   };
   
 

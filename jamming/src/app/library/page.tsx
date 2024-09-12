@@ -1,8 +1,9 @@
 import React from 'react'
-import Image from 'next/image'
-import { Music, Disc, Heart } from 'lucide-react'
+import { Heart } from 'lucide-react'
+import { LibraryItemsType } from '../components/layout-library/types-library/libraryPageTypes'
+import { LibraryItem } from '../components/layout-library/libraryItem'
 
-const libraryItems = [
+const libraryItems: LibraryItemsType[] = [
   { type: 'playlist', name: 'My Favorite Tracks', imageUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop', itemCount: 42 },
   { type: 'album', name: 'Midnight Memories', artist: 'The Night Owls', imageUrl: 'https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=300&h=300&fit=crop', year: 2023 },
   { type: 'playlist', name: 'Workout Beats', imageUrl: 'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=300&h=300&fit=crop', itemCount: 28 },
@@ -22,30 +23,11 @@ export default function LibraryPage() {
           <h2 className="text-2xl font-semibold mb-2">Liked Songs</h2>
           <p className="text-blue-300">238 liked songs</p>
         </div>
-
         {libraryItems.map((item, index) => (
-          <div key={index} className="bg-blue-800 p-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
-            <Image
-              src={item.imageUrl}
-              alt={item.name}
-              width={150}
-              height={150}
-              className="w-full h-auto rounded-md mb-4 object-cover"
-            />
-            <h3 className="font-semibold text-lg mb-1">{item.name}</h3>
-            {item.type === 'playlist' ? (
-              <div className="flex items-center text-blue-300">
-                <Music className="w-4 h-4 mr-2" />
-                <span>{item.itemCount} tracks</span>
-              </div>
-            ) : (
-              <div className="flex items-center text-blue-300">
-                <Disc className="w-4 h-4 mr-2" />
-                <span>{item.artist} • {item.year}</span>
-              </div>
-            )}
-          </div>
+             <LibraryItem key={index} item={item} />
+       
         ))}
+        
       </div>
     </div>
   )

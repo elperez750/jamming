@@ -1,41 +1,15 @@
-import Image from "next/image";
-import Travis from "../../public/static/images/travis.jpg";
-import { FeaturedPlaylists } from "./components/layout/featuredPlaylists";
-import { featuredPlayListType, reccomendedArtistType } from "./components/types/homePageTypes";
-import { recentlyPlayedType } from "./components/types/homePageTypes";
-import { RecentlyPlayed } from "./components/layout/recentlyPlayed";
-import { ReccomendedArtist } from "./components/layout/reccomendedArtist";
+"use client"
 
-const featuredPlaylistsArray: featuredPlayListType[] = [
-  {
-    id: 1,
-    name: "Today's Top Hits",
-    imageUrl: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop",
-    songs: 50,
-    hours: 3,
-  },
-  {
-    id: 2,
-    name: "Chill Vibes",
-    imageUrl: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop",
-    songs: 40,
-    hours: 2.5,
-  },
-  {
-    id: 3,
-    name: "Workout Motivation",
-    imageUrl: "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=300&h=300&fit=crop",
-    songs: 60,
-    hours: 4,
-  },
-  {
-    id: 4,
-    name: "Indie Discoveries",
-    imageUrl: "https://images.unsplash.com/photo-1511735111819-9a3f7709049c?w=300&h=300&fit=crop",
-    songs: 45,
-    hours: 3.2,
-  },
-];
+import { FeaturedPlaylists } from "./components/layout-discover/featuredPlaylists";
+import { recentlyPlayedType, reccomendedArtistType } from "./components/layout-discover/types-discover/discoverPageTypes"
+import { RecentlyPlayed } from "./components/layout-discover/recentlyPlayed";
+import { ReccomendedArtist } from "./components/layout-discover/reccomendedArtist";
+import { SearchBar } from "./components/layout-discover/searchBar";
+import { useAuth } from "./context/authContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { LogOut } from 'lucide-react';
+import { useUserPlaylists } from "./hooks/useUserPlaylists";
 
 const recentlyPlayedArray: recentlyPlayedType[] = [
   {
@@ -95,46 +69,87 @@ const recommendedArtistsArray: reccomendedArtistType[] = [
 ];
 
 export default function Home() {
+  const { user, loginWithSpotify, logout } = useAuth();
+  const router = useRouter();
+  const { playlists, loading, error } = useUserPlaylists();
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get('access_token');
+
+    if (accessToken) {
+      loginWithSpotify(accessToken);
+      router.replace('/');
+    }
+  }, [loginWithSpotify, router]);
+
+  useEffect(() => {
+    if (!user) {
+      router.push('/login');
+    }
+  }, [user, router]);
+
+  if (!user) return (
+    <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-900 to-indigo-950">
+      <p className="text-white text-2xl">Loading...</p>
+    </div>
+  );
+
   return (
     <div className="bg-gradient-to-br from-blue-900 to-indigo-950 text-white min-h-screen p-8">
-      <h1 className="text-4xl font-bold mb-8">Welcome to Jamming</h1>
-
-
-      {/* This is the featured playlist section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Featured Playlists</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredPlaylistsArray.map((playlist) => (
-            <FeaturedPlaylists key={playlist.id} {...playlist} />
-          ))}
+      <div className="max-w-7xl mx-auto">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-300">
+            Welcome to Jamming
+          </h1>
+          <div className="flex items-center space-x-4">
+            <p className="text-xl font-semibold text-blue-300">
+              Hello, <span className="text-cyan-300">{user.name}</span>
+            </p>
+            <button
+              onClick={logout}
+              className="px-4 py-2 bg-blue-700 hover:bg-blue-600 text-white rounded-full transition duration-300 flex items-center space-x-2"
+            >
+              <LogOut size={18} />
+              <span>Logout</span>
+            </button>
+          </div>
         </div>
-      </section>
 
-
-
-      {/* Recently played section */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Recently Played</h2>
-        <div className="bg-blue-800 rounded-lg shadow-lg overflow-hidden">
-          {recentlyPlayedArray.map((song) => (
-            <RecentlyPlayed key={song.id} {...song} />
-          ))}
-
+        <div className="mb-16">
+          <SearchBar />
         </div>
-      </section>
 
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4">Featured Playlists</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {playlists.map((playlist: any, idx) => (
+             
+             <FeaturedPlaylists id={idx} name={playlist.name} imageUrl={playlist.images[0].url} tracks={playlist.tracks.total}/>
+            
+              
+            ))}
+          </div>
+        </section>
 
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4">Recently Played</h2>
+          <div className="bg-blue-800 bg-opacity-50 rounded-lg shadow-lg overflow-hidden">
+            {recentlyPlayedArray.map((song) => (
+              <RecentlyPlayed key={song.id} {...song} />
+            ))}
+          </div>
+        </section>
 
-      
-      {/* Reccomended artists section  */}
-      <section>
-        <h2 className="text-2xl font-semibold mb-4">Recommended Artists</h2>
-        <div className="flex space-x-6 overflow-x-auto pb-4">
-          {recommendedArtistsArray.map((artist) => (
+        <section>
+          <h2 className="text-2xl font-semibold mb-4">Recommended Artists</h2>
+          <div className="flex space-x-6 overflow-x-auto pb-4">
+            {recommendedArtistsArray.map((artist) => (
               <ReccomendedArtist key={artist.id} {...artist} />
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

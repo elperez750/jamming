@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Play } from "lucide-react";
-import { recentlyPlayedType } from "../types/homePageTypes";
+import { recentlyPlayedType } from "../types-discover/discoverPageTypes";
 
 export function RecentlyPlayed(
  { id, name, artist, imageUrl, duration }: recentlyPlayedType,  length : number, 
