@@ -1,99 +1,52 @@
-"use client"
+"use client";
 
 import { FeaturedPlaylists } from "./components/layout-discover/featuredPlaylists";
-import { recentlyPlayedType, reccomendedArtistType } from "./components/layout-discover/types-discover/discoverPageTypes"
+
 import { RecentlyPlayed } from "./components/layout-discover/recentlyPlayed";
-import { ReccomendedArtist } from "./components/layout-discover/reccomendedArtist";
 import { SearchBar } from "./components/layout-discover/searchBar";
 import { useAuth } from "./context/authContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { LogOut } from 'lucide-react';
+import { LogOut } from "lucide-react";
 import { useUserPlaylists } from "./hooks/useUserPlaylists";
-
-const recentlyPlayedArray: recentlyPlayedType[] = [
-  {
-    id: 1,
-    name: "Blinding Lights",
-    artist: "The Weeknd",
-    imageUrl: "https://images.unsplash.com/photo-1605722243979-fe0be8158232?w=60&h=60&fit=crop",
-    duration: "3:20",
-  },
-  {
-    id: 2,
-    name: "Don't Start Now",
-    artist: "Dua Lipa",
-    imageUrl: "https://images.unsplash.com/photo-1496293455970-f8581aae0e3b?w=60&h=60&fit=crop",
-    duration: "3:03",
-  },
-  {
-    id: 3,
-    name: "Watermelon Sugar",
-    artist: "Harry Styles",
-    imageUrl: "https://images.unsplash.com/photo-1504898770365-14faca6a7320?w=60&h=60&fit=crop",
-    duration: "2:54",
-  },
-];
-
-const recommendedArtistsArray: reccomendedArtistType[] = [
-  {
-    id: 1,
-    name: "Taylor Swift",
-    imageUrl: "https://images.unsplash.com/photo-1561518776-e76a5e48f731?w=100&h=100&fit=crop",
-  },
-  {
-    id: 2,
-    name: "Ed Sheeran",
-    imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop",
-  },
-  {
-    id: 3,
-    name: "Ariana Grande",
-    imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-  },
-  {
-    id: 4,
-    name: "Post Malone",
-    imageUrl: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=100&h=100&fit=crop",
-  },
-  {
-    id: 5,
-    name: "Billie Eilish",
-    imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop",
-  },
-  {
-    id: 6,
-    name: "Drake",
-    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
-  }
-];
+import { useRecentSongs } from "./hooks/useRecentSongs";
+import { useReccomended } from "./hooks/useReccomended";
+import { TopArtist } from "./components/layout-discover/topArtists";
+import { useTopArtists } from "./hooks/useTopArtists";
+import { useTopTracks } from "./hooks/useTopTracks";
+import { TopTrack } from "./components/layout-discover/topTracks";
 
 export default function Home() {
   const { user, loginWithSpotify, logout } = useAuth();
   const router = useRouter();
-  const { playlists, loading, error } = useUserPlaylists();
+  const { playlists } = useUserPlaylists();
+  const { recentSongs } = useRecentSongs();
+  const { reccomended } = useReccomended();
+  const { topArtists } = useTopArtists();
+  const { topTrack } = useTopTracks();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const accessToken = urlParams.get('access_token');
+    const accessToken = urlParams.get("access_token");
 
     if (accessToken) {
       loginWithSpotify(accessToken);
-      router.replace('/');
+      router.replace("/");
     }
   }, [loginWithSpotify, router]);
 
   useEffect(() => {
     if (!user) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [user, router]);
 
-  if (!user) return (
-    <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-900 to-indigo-950">
-      <p className="text-white text-2xl">Loading...</p>
-    </div>
-  );
+  if (!user)
+    return (
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-900 to-indigo-950">
+        <p className="text-white text-2xl">Loading...</p>
+      </div>
+    );
 
   return (
     <div className="bg-gradient-to-br from-blue-900 to-indigo-950 text-white min-h-screen p-8">
@@ -124,10 +77,14 @@ export default function Home() {
           <h2 className="text-2xl font-semibold mb-4">Featured Playlists</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {playlists.map((playlist: any, idx) => (
-             
-             <FeaturedPlaylists id={idx} name={playlist.name} imageUrl={playlist.images[0].url} tracks={playlist.tracks.total}/>
-            
-              
+              <div key={idx}>
+                <FeaturedPlaylists
+                  id={idx}
+                  name={playlist.name}
+                  imageUrl={playlist.images[0].url}
+                  tracks={playlist.tracks.total}
+                />
+              </div>
             ))}
           </div>
         </section>
@@ -135,18 +92,47 @@ export default function Home() {
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Recently Played</h2>
           <div className="bg-blue-800 bg-opacity-50 rounded-lg shadow-lg overflow-hidden">
-            {recentlyPlayedArray.map((song) => (
-              <RecentlyPlayed key={song.id} {...song} />
+            {recentSongs.map((song: any, idx) => (
+              <RecentlyPlayed
+                id={idx}
+                songName={song.track.name}
+                artistName={song.track.artists[0]?.name}
+                imageUrl={song.track.album.images[0]?.url}
+                duration={song.track.duration_ms}
+              />
+            ))}
+          </div>
+        </section>
+
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-4">Your Top Artists</h2>
+          <div className="flex space-x-6 overflow-x-auto pb-4">
+            {topArtists.map((artist: any, idx) => (
+              <TopArtist
+                id={idx}
+                artistName={artist.name}
+                imageUrl={artist.images[0].url}
+              />
             ))}
           </div>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-4">Recommended Artists</h2>
-          <div className="flex space-x-6 overflow-x-auto pb-4">
-            {recommendedArtistsArray.map((artist) => (
-              <ReccomendedArtist key={artist.id} {...artist} />
-            ))}
+          <h2 className="text-2xl font-semibold mb-4">
+            Your Top Tracks
+          </h2>
+          <div className="flex spaxe-x-6 overflow-x-auto pb-4">
+          {topTrack.map((track: any, idx) => {
+              const artistNames = track.artists.map((artist: any) => artist.name).join(", ");
+              return (
+                <TopTrack
+                  id={idx}
+                  trackName={track.name}
+                  imageUrl={track.album.images[0].url}
+                  artistName={artistNames}
+                />
+              );
+            })}
           </div>
         </section>
       </div>

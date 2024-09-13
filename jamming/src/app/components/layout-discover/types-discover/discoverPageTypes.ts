@@ -9,16 +9,35 @@ export type featuredPlayListType = {
 
   export type recentlyPlayedType = {
     id: number;
-    name: string;
-    artist: string;
+    songName: string;
+    artistName: string;
     imageUrl: string;
-    duration: string;
+    duration: number;
   };
   
 
 
-  export type reccomendedArtistType = {
+  export type topArtistType = {
     id: number;
-    name: string;
+    artistName: string;
     imageUrl: string;
+  }
+
+
+
+  export type reccomendedTracksType = {
+    id: number;
+    trackName: string;
+    imageUrl: string;
+    artistName: string;
+
+  }
+
+
+  export type topTracksType = {
+    id: number;
+    trackName: string;
+    imageUrl: string;
+    artistName: string
+
   }
