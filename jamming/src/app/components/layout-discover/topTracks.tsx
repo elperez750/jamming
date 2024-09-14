@@ -26,9 +26,7 @@ export function TopTrack({ id, trackName, imageUrl, artistName }: TopTrackProps)
       <div className="text-center">
         <h3 className="font-semibold text-white group-hover:text-cyan-300 transition-colors duration-300 text-sm mb-1 truncate">{trackName}</h3>
         <p className="text-xs text-blue-300 mb-2 truncate">{artistName}</p>
-        <button className="text-blue-300 hover:text-cyan-300 transition-colors duration-300">
-          <MoreHorizontal size={16} />
-        </button>
+        
       </div>
     </div>
   )
