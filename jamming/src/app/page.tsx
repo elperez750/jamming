@@ -3,7 +3,7 @@
 import { FeaturedPlaylists } from "./components/layout-discover/featuredPlaylists";
 
 import { RecentlyPlayed } from "./components/layout-discover/recentlyPlayed";
-import { SearchBar } from "./components/layout-discover/searchBar";
+import { SearchBar } from "./components/layout-search/searchBar";
 import { useAuth } from "./context/authContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -15,6 +15,7 @@ import { TopArtist } from "./components/layout-discover/topArtists";
 import { useTopArtists } from "./hooks/useTopArtists";
 import { useTopTracks } from "./hooks/useTopTracks";
 import { TopTrack } from "./components/layout-discover/topTracks";
+import Link from "next/link";
 
 export default function Home() {
   const { user, loginWithSpotify, logout } = useAuth();
@@ -69,21 +70,22 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mb-16">
-          <SearchBar />
-        </div>
+      
 
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4">Featured Playlists</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {playlists.map((playlist: any, idx) => (
               <div key={idx}>
+                <Link href={`/playlist/${playlist.id}`} passHref>
                 <FeaturedPlaylists
                   id={idx}
                   name={playlist.name}
                   imageUrl={playlist.images[0].url}
                   tracks={playlist.tracks.total}
                 />
+
+                </Link>
               </div>
             ))}
           </div>

@@ -5,6 +5,7 @@ import {
   BarChart2,
   List,
   PlusCircle,
+  Search
 } from "lucide-react";
 import { NavItem } from "./navItem";
 import { PlaylistItem } from "./playlistItem";
@@ -27,6 +28,11 @@ export default function SideNavbar() {
       <div className="flex-1 flex flex-col justify-between overflow-y-auto custom-scrollbar">
         <ul className="space-y-2 px-4 py-4">
           <NavItem
+            href="/search"
+            icon={<Search className="mr-3" />}
+            text="Search"
+            />
+          <NavItem
             href="/"
             icon={<Headphones className="mr-3" />}
             text="Discover"
@@ -41,6 +47,7 @@ export default function SideNavbar() {
             icon={<List className="mr-3" />}
             text="Library"
           />
+
         </ul>
 
         <div className="mt-auto p-4 border-t border-blue-800">
